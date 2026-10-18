@@ -1,34 +1,119 @@
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Product } from "../types";
- interface ProductCardProps {
-   product: Product;
- } 
+import { useCart } from "../context/CartContext";
+
+interface ProductCardProps {
+  product: Product;
+}
+
+function flyToCart(sourceImg: HTMLImageElement) {
+  const target = document.getElementById("cart-icon-target");
+  if (!target) return;
+
+  const start = sourceImg.getBoundingClientRect();
+  const end = target.getBoundingClientRect();
+
+  const clone = sourceImg.cloneNode(true) as HTMLImageElement;
+  clone.style.position = "fixed";
+  clone.style.left = `${start.left}px`;
+  clone.style.top = `${start.top}px`;
+  clone.style.width = `${start.width}px`;
+  clone.style.height = `${start.height}px`;
+  clone.style.objectFit = "contain";
+  clone.style.zIndex = "9999";
+  clone.style.pointerEvents = "none";
+  clone.style.transition =
+    "left 750ms cubic-bezier(0.5, -0.3, 0.7, 1.2), top 750ms cubic-bezier(0.3, 0.2, 0.6, 1), width 750ms ease-in, height 750ms ease-in, opacity 750ms ease-in, transform 750ms ease-in";
+  clone.style.borderRadius = "9999px";
+  document.body.appendChild(clone);
+
+  requestAnimationFrame(() => {
+    clone.style.left = `${end.left + end.width / 2 - 10}px`;
+    clone.style.top = `${end.top + end.height / 2 - 10}px`;
+    clone.style.width = "20px";
+    clone.style.height = "20px";
+    clone.style.opacity = "0.2";
+    clone.style.transform = "rotate(540deg)";
+  });
+
+  setTimeout(() => {
+    clone.remove();
+    window.dispatchEvent(new CustomEvent("cart:bump"));
+  }, 750);
+}
 
 function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const handleAdd = () => {
+    if (imgRef.current) flyToCart(imgRef.current);
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
   return (
-    <div
-      className="p-4 bg-white shadow-md rounded-lg border-t-4 border-blue-500 hover:shadow-xl hover:-translate-y-1 transition-transform duration-200 flex
-  flex-col"
-    >
-      <img
-        src={product.image}
-        alt={product.title}
-        className="h-40 object-contain mb-3"
-      />
-      <span className="text-xs font-semibold uppercase tracking-wide text-white bg-blue-500 px-2 py-0.5 rounded self-start">
-        {product.category}
-      </span>
-      <h3 className="text-sm font-bold text-gray-800 mt-2 line-clamp-2">
-        {product.title}
-      </h3>
-      <p className="text-green-600 font-semibold mt-2">${product.price}</p>
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden border border-slate-100">
       <Link
         to={`/product/${product.id}`}
-        className="mt-3 w-full bg-blue-600 text-white text-sm font-semibold py-2 rounded hover:bg-blue-700 transition-colors text-center"
+        className="relative bg-gradient-to-br from-slate-50 to-slate-100 p-6 flex items-center justify-center h-48"
       >
-        View Details
+        <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-white/80 backdrop-blur px-2 py-0.5 rounded-full shadow-sm">
+          {product.category}
+        </span>
+        <img
+          ref={imgRef}
+          src={product.image}
+          alt={product.title}
+          className="max-h-full w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+        />
       </Link>
+
+      <div className="p-4 flex flex-col flex-1">
+        <Link
+          to={`/product/${product.id}`}
+          className="text-sm font-semibold text-slate-800 line-clamp-2 hover:text-slate-900 hover:underline transition min-h-10"
+        >
+          {product.title}
+        </Link>
+
+        {product.rating && (
+          <div className="flex items-center gap-1 mt-2 text-xs text-slate-500">
+            <svg
+              className="h-3.5 w-3.5 text-yellow-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+            </svg>
+            <span className="font-medium text-slate-700">
+              {product.rating.rate.toFixed(1)}
+            </span>
+            <span>({product.rating.count})</span>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mt-3">
+          <span className="text-lg font-bold text-slate-900">
+            ${product.price.toFixed(2)}
+          </span>
+          <button
+            onClick={handleAdd}
+            className={`cursor-pointer text-xs font-semibold px-3 py-2 rounded-lg transition-all ${
+              added
+                ? "bg-green-500 text-white"
+                : "bg-slate-900 text-white hover:bg-slate-700"
+            }`}
+          >
+            {added ? "Added" : "Add to Cart"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
 export default ProductCard;
