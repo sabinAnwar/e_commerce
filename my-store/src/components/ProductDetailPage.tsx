@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import type { Product } from "../types";
+import { useCart } from "../context/CartContext";
 
 function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +56,10 @@ function ProductDetailPage() {
               ⭐ {product.rating.rate} ({product.rating.count} reviews)
             </p>
           )}
-          <button className="mt-6 w-full bg-blue-600 text-white font-semibold py-3 rounded hover:bg-blue-700 transition-colors">
+          <button
+            onClick={() => addToCart(product)}
+            className="mt-6 w-full bg-blue-600 text-white font-semibold py-3 rounded hover:bg-blue-700 transition-colors"
+          >
             Add to Cart
           </button>
         </div>
