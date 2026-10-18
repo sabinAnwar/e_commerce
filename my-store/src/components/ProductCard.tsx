@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Product } from "../types";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 
 interface ProductCardProps {
   product: Product;

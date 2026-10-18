@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 
 function Header() {
   const { totalItems } = useCart();
@@ -65,7 +65,7 @@ function Header() {
             <span>Cart</span>
             {totalItems > 0 && (
               <span
-                className={`absolute -top-2 -right-3 bg-slate-900 text-white text-[10px] font-bold rounded-full h-5 min-w-[1.25rem] px-1 flex items-center justify-center ${
+                className={`absolute -top-2 -right-3 bg-slate-900 text-white text-[10px] font-bold rounded-full h-5 min-w-5 px-1 flex items-center justify-center ${
                   bump ? "cart-badge-pop" : ""
                 }`}
               >

@@ -48,9 +48,7 @@ function HomePage() {
   }
 
   if (error) {
-    return (
-      <p className="text-center p-10 text-red-500">Error: {error}</p>
-    );
+    return <p className="text-center p-10 text-red-500">Error: {error}</p>;
   }
 
   return (
