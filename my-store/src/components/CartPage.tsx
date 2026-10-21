@@ -5,7 +5,7 @@ function CartPage() {
   const { items, removeFromCart, updateQuantity, clearCart, totalPrice } =
     useCart();
 
-  if (items.length === 0) {
+  if (!items.length) {
     return (
       <main className="cart-empty">
         <div className="cart-empty-card">
@@ -53,16 +53,11 @@ function CartPage() {
                 </div>
 
                 <div className="cart-item-info">
-                  <Link
-                    to={`/product/${item.id}`}
-                    className="cart-item-title"
-                  >
+                  <Link to={`/product/${item.id}`} className="cart-item-title">
                     {item.title}
                   </Link>
                   <span className="pill pill-muted">{item.category}</span>
-                  <p className="cart-item-price">
-                    ${item.price.toFixed(2)}
-                  </p>
+                  <p className="cart-item-price">${item.price.toFixed(2)}</p>
                 </div>
 
                 <div className="qty-selector">
@@ -124,9 +119,7 @@ function CartPage() {
               <span>Total</span>
               <span>${totalPrice.toFixed(2)}</span>
             </div>
-            <button className="btn btn-primary cart-checkout">
-              Checkout
-            </button>
+            <button className="btn btn-primary cart-checkout">Checkout</button>
             <button className="cart-clear" onClick={clearCart}>
               Clear cart
             </button>

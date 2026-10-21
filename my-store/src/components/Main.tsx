@@ -1,4 +1,4 @@
-import ProductCard from "./ProductCard";
+﻿import ProductCard from "./ProductCard";
 import type { Product } from "../types";
 
 interface MainProps {
@@ -7,8 +7,8 @@ interface MainProps {
 
 function Main({ products }: MainProps) {
   return (
-    <main className="pd-page">
-      <div className="pd-container">
+    <main className="page">
+      <div className="page-container">
         <h2 className="cart-title" style={{ textAlign: "center" }}>
           Our Products
         </h2>

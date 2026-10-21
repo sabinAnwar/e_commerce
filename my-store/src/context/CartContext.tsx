@@ -11,10 +11,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? (JSON.parse(raw) as CartItem[]) : [];
     } catch {
+      console.error("Failed to parse cart from localStorage");
       return [];
     }
   });
 
+  
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));

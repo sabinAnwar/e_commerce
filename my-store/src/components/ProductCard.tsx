@@ -1,65 +1,19 @@
-import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Product } from "../types";
-import { useCart } from "../hooks/useCart";
+import { useAddToCart } from "../hooks/useAddToCart";
 
 interface ProductCardProps {
   product: Product;
 }
 
-function flyToCart(sourceImg: HTMLImageElement) {
-  const target = document.getElementById("cart-icon-target");
-  if (!target) return;
-
-  const start = sourceImg.getBoundingClientRect();
-  const end = target.getBoundingClientRect();
-
-  const clone = sourceImg.cloneNode(true) as HTMLImageElement;
-  clone.style.position = "fixed";
-  clone.style.left = `${start.left}px`;
-  clone.style.top = `${start.top}px`;
-  clone.style.width = `${start.width}px`;
-  clone.style.height = `${start.height}px`;
-  clone.style.objectFit = "contain";
-  clone.style.zIndex = "9999";
-  clone.style.pointerEvents = "none";
-  clone.style.transition =
-    "left 750ms cubic-bezier(0.5, -0.3, 0.7, 1.2), top 750ms cubic-bezier(0.3, 0.2, 0.6, 1), width 750ms ease-in, height 750ms ease-in, opacity 750ms ease-in, transform 750ms ease-in";
-  clone.style.borderRadius = "9999px";
-  document.body.appendChild(clone);
-
-  requestAnimationFrame(() => {
-    clone.style.left = `${end.left + end.width / 2 - 10}px`;
-    clone.style.top = `${end.top + end.height / 2 - 10}px`;
-    clone.style.width = "20px";
-    clone.style.height = "20px";
-    clone.style.opacity = "0.2";
-    clone.style.transform = "rotate(540deg)";
-  });
-
-  setTimeout(() => {
-    clone.remove();
-    window.dispatchEvent(new CustomEvent("cart:bump"));
-  }, 750);
-}
-
 function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useCart();
-  const [added, setAdded] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  const handleAdd = () => {
-    if (imgRef.current) flyToCart(imgRef.current);
-    addToCart(product);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
-  };
+  const { imgRef, added, handleAdd } = useAddToCart();
 
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden border border-slate-100">
       <Link
         to={`/product/${product.id}`}
-        className="relative bg-gradient-to-br from-slate-50 to-slate-100 p-6 flex items-center justify-center h-48"
+        className="relative bg-linear-to-br from-slate-50 to-slate-100 p-6 flex items-center justify-center h-48"
       >
         <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider text-slate-700 bg-white/80 backdrop-blur px-2 py-0.5 rounded-full shadow-sm">
           {product.category}
@@ -101,7 +55,7 @@ function ProductCard({ product }: ProductCardProps) {
             ${product.price.toFixed(2)}
           </span>
           <button
-            onClick={handleAdd}
+            onClick={() => handleAdd(product)}
             className={`cursor-pointer text-xs font-semibold px-3 py-2 rounded-lg transition-all ${
               added
                 ? "bg-green-500 text-white"

@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import ProductCard from "./ProductCard";
+import Loader from "./Loader";
+import ErrorMessage from "./ErrorMessage";
 import type { Product } from "../types";
 
 function HomePage() {
@@ -39,17 +41,8 @@ function HomePage() {
     return matchesSearch && matchesCategory;
   });
 
-  if (loading) {
-    return (
-      <main className="flex items-center justify-center min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-        <div className="animate-spin rounded-full h-14 w-14 border-4 border-slate-900 border-t-transparent" />
-      </main>
-    );
-  }
-
-  if (error) {
-    return <p className="text-center p-10 text-red-500">Error: {error}</p>;
-  }
+  if (loading) return <Loader message="Loading products..." playful />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-10 px-4 sm:px-6 lg:px-8">
