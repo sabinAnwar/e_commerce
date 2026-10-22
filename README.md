@@ -1,6 +1,6 @@
 # E-Commerce
 
-A modern e-commerce application built with React and Vite.
+A modern e-commerce application with React and Vite.
 
 ## Features
 
